@@ -231,8 +231,59 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-        <p>API Shield Nova - OWASP API Security Top 10 기반 자동 보안 분석 도구</p>
+      <footer className="mt-16 py-8 border-t border-gray-800">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* 기술 스택 */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-300 mb-4">기술 스택</h3>
+              <div className="space-y-2 text-sm text-gray-400">
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">React 18</span>
+                  <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">Vite 5</span>
+                  <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">Tailwind CSS</span>
+                  <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">OpenAI GPT-4o-mini</span>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <span className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded">Vercel</span>
+                  <span className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded">Serverless Functions</span>
+                  <span className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded">OWASP API Top 10</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 개발자 정보 */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-300 mb-4">개발자 정보</h3>
+              <div className="space-y-2 text-sm text-gray-400">
+                <p>25.12.10 / 동준상.넥스트플랫폼</p>
+                <p>
+                  <a 
+                    href="mailto:naebon@naver.com" 
+                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    naebon@naver.com
+                  </a>
+                </p>
+                <p>
+                  <a 
+                    href="https://www.nextplatform.net" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    www.nextplatform.net
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* 하단 저작권 정보 */}
+          <div className="mt-8 pt-6 border-t border-gray-700 text-center text-gray-500 text-sm">
+            <p>API Shield Nova - OWASP API Security Top 10 기반 자동 보안 분석 도구</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
