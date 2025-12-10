@@ -68,7 +68,11 @@ function App() {
         throw new Error(data.error || '분석 중 오류가 발생했습니다.');
       }
 
-      setAnalysisResult(data);
+      // 원본 OpenAPI 스펙도 함께 저장
+      setAnalysisResult({
+        ...data,
+        originalSpec: specText,
+      });
       setActiveTab('summary');
     } catch (err) {
       console.error('분석 오류:', err);
