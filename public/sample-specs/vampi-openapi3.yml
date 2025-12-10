@@ -1,0 +1,165 @@
+openapi: 3.0.0
+info:
+  title: VAmPI - Vulnerable API
+  version: 1.0.0
+  description: 취약한 API 예제 (OWASP API Top 10 학습용)
+
+servers:
+  - url: http://localhost:5000
+    description: 로컬 개발 서버
+
+paths:
+  /api/users/{userId}:
+    get:
+      summary: 사용자 정보 조회
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  email:
+                    type: string
+                  password:
+                    type: string
+                  creditCard:
+                    type: string
+      # 보안 설정 없음 - BOLA 취약점
+      
+    put:
+      summary: 사용자 정보 수정
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+      responses:
+        '200':
+          description: 성공
+      # 인증/인가 없음 - Mass Assignment 취약점
+
+  /api/admin/users:
+    get:
+      summary: 모든 사용자 조회 (관리자 전용)
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: 성공
+      # 권한 체크 없음 - Broken Function Level Authorization
+
+  /api/auth/login:
+    post:
+      summary: 로그인
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+      # JWT 검증 로직 없음 - Broken Authentication
+
+  /api/payment/process:
+    post:
+      summary: 결제 처리
+      operationId: processPayment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                creditCard:
+                  type: string
+      responses:
+        '200':
+          description: 성공
+      # Rate Limit 없음 - Unrestricted Access to Sensitive Business Flows
+
+  /api/proxy:
+    get:
+      summary: 프록시 요청
+      operationId: proxyRequest
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 성공
+      # URL 검증 없음 - SSRF 취약점
+
+  /api/v1/users:
+    get:
+      summary: 구버전 API (v1)
+      operationId: getUsersV1
+      responses:
+        '200':
+          description: 성공
+      # 구버전 API 노출 - Improper Inventory Management
+
+  /api/external/call:
+    post:
+      summary: 외부 API 호출
+      operationId: callExternalAPI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+                data:
+                  type: object
+      responses:
+        '200':
+          description: 성공
+      # 외부 API 검증 없음 - Unsafe Consumption of APIs
+
