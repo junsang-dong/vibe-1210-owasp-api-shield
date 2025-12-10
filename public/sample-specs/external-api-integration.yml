@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: 외부 API 통합 서비스
+  version: 1.0.0
+  description: 외부 API를 호출하는 서비스 예시
+
+servers:
+  - url: http://api.example.com
+    description: 프로덕션 서버
+
+paths:
+  /api/external/call:
+    post:
+      summary: 외부 API 호출
+      operationId: callExternalAPI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+                method:
+                  type: string
+                data:
+                  type: object
+      responses:
+        '200':
+          description: 성공
+      # 외부 API 검증 없음 - Unsafe Consumption of APIs
+
+  /api/proxy:
+    get:
+      summary: 프록시 요청
+      operationId: proxyRequest
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 성공
+      # URL 검증 없음 - SSRF 취약점
+
+  /api/webhook:
+    post:
+      summary: 웹훅 수신
+      operationId: receiveWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: 성공
+      # 웹훅 검증 없음 - 위조 가능
+
+  /api/third-party/data:
+    get:
+      summary: 서드파티 데이터 조회
+      operationId: getThirdPartyData
+      parameters:
+        - name: source
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 성공
+      # 입력 검증 없음
+
+  /api/external/upload:
+    post:
+      summary: 외부 서비스로 파일 업로드
+      operationId: uploadToExternal
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                destination:
+                  type: string
+      responses:
+        '200':
+          description: 성공
+      # 파일 검증 및 목적지 검증 없음
+

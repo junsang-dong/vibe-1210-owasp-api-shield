@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: 보안이 강화된 API
+  version: 1.0.0
+  description: 보안 모범 사례를 따르는 잘 보호된 API 예시
+
+servers:
+  - url: https://api.example.com
+    description: 프로덕션 서버 (HTTPS)
+
+paths:
+  /api/users/{userId}:
+    get:
+      summary: 사용자 정보 조회
+      operationId: getUserById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 성공
+        '401':
+          description: 인증 실패
+        '403':
+          description: 권한 없음
+      # JWT 인증 및 사용자 ID 검증 필요
+
+  /api/admin/users:
+    get:
+      summary: 모든 사용자 조회 (관리자 전용)
+      operationId: getAllUsers
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 성공
+        '403':
+          description: 관리자 권한 필요
+      # 관리자 권한 체크
+
+  /api/auth/login:
+    post:
+      summary: 로그인
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: 인증 실패
+      # Rate Limiting 적용 권장
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+

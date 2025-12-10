@@ -23,16 +23,7 @@ function App() {
     setError(null);
   };
 
-  const loadSampleSpec = async () => {
-    try {
-      const response = await fetch('/sample-specs/vampi-openapi3.yml');
-      const text = await response.text();
-      setSpecText(text);
-      setError(null);
-    } catch (err) {
-      setError('샘플 파일을 불러올 수 없습니다.');
-    }
-  };
+  // 샘플 로드는 SpecEditor 컴포넌트에서 직접 처리
 
   const handleAnalyze = async () => {
     if (!specText.trim()) {
@@ -124,7 +115,6 @@ function App() {
                 <SpecEditor
                   value={specText}
                   onChange={handleTextChange}
-                  onLoadSample={loadSampleSpec}
                 />
               </div>
 

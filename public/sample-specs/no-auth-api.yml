@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  title: 인증 없는 API
+  version: 1.0.0
+  description: 인증 메커니즘이 전혀 없는 취약한 API
+
+servers:
+  - url: http://api.example.com
+    description: 프로덕션 서버
+
+paths:
+  /api/users:
+    get:
+      summary: 모든 사용자 조회
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    email:
+                      type: string
+                    password:
+                      type: string
+      # 인증 없음
+
+    post:
+      summary: 사용자 생성
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+      responses:
+        '201':
+          description: 생성됨
+      # 인증 없음 - 누구나 사용자 생성 가능
+
+  /api/users/{id}:
+    delete:
+      summary: 사용자 삭제
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 삭제됨
+      # 인증 없음 - 누구나 삭제 가능
+
+  /api/admin/config:
+    get:
+      summary: 관리자 설정 조회
+      operationId: getAdminConfig
+      responses:
+        '200':
+          description: 성공
+      # 인증 없음 - 민감한 설정 노출
+
+    put:
+      summary: 관리자 설정 수정
+      operationId: updateAdminConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: 성공
+      # 인증 없음 - 누구나 설정 변경 가능
+

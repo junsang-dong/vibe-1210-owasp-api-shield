@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  title: 기본 REST API
+  version: 1.0.0
+  description: 기본적인 REST API 구조를 가진 예시
+
+servers:
+  - url: http://api.example.com
+    description: 프로덕션 서버
+
+paths:
+  /api/products:
+    get:
+      summary: 제품 목록 조회
+      operationId: getProducts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 성공
+    post:
+      summary: 제품 생성
+      operationId: createProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+      responses:
+        '201':
+          description: 생성됨
+
+  /api/products/{id}:
+    get:
+      summary: 제품 상세 조회
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 성공
+    put:
+      summary: 제품 수정
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: 성공
+    delete:
+      summary: 제품 삭제
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 삭제됨
+
