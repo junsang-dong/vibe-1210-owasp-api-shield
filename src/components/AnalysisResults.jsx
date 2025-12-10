@@ -126,30 +126,30 @@ export default function AnalysisResults({ data }) {
   return (
     <div className="space-y-6">
       {/* 분석 요약 모듈 */}
-      <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-        <h3 className="text-xl font-bold mb-4">📋 분석 요약</h3>
-        <div className="bg-gray-900 rounded-lg p-4 border border-gray-600">
-          <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">📋 분석 요약</h3>
+        <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+          <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
             {analysisSummary}
           </p>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          <div className="text-sm text-gray-400">
-            총 취약점: <span className="text-white font-semibold">{vulnerabilities?.length || 0}개</span>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            총 취약점: <span className="text-gray-900 dark:text-white font-semibold">{vulnerabilities?.length || 0}개</span>
           </div>
           {summary && (
             <>
-              <div className="text-sm text-gray-400">
-                Critical: <span className="text-red-400 font-semibold">{summary.criticalIssues || 0}</span>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Critical: <span className="text-red-600 dark:text-red-400 font-semibold">{summary.criticalIssues || 0}</span>
               </div>
-              <div className="text-sm text-gray-400">
-                High: <span className="text-orange-400 font-semibold">{summary.highIssues || 0}</span>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                High: <span className="text-orange-600 dark:text-orange-400 font-semibold">{summary.highIssues || 0}</span>
               </div>
-              <div className="text-sm text-gray-400">
-                Medium: <span className="text-yellow-400 font-semibold">{summary.mediumIssues || 0}</span>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Medium: <span className="text-yellow-600 dark:text-yellow-400 font-semibold">{summary.mediumIssues || 0}</span>
               </div>
-              <div className="text-sm text-gray-400">
-                Low: <span className="text-green-400 font-semibold">{summary.lowIssues || 0}</span>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Low: <span className="text-green-600 dark:text-green-400 font-semibold">{summary.lowIssues || 0}</span>
               </div>
             </>
           )}
@@ -157,9 +157,9 @@ export default function AnalysisResults({ data }) {
       </div>
 
       {/* 문서 내 취약점 모듈 */}
-      <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">📄 문서 내 취약점</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">📄 문서 내 취약점</h3>
           <div className="flex gap-2 text-xs">
             <span className="px-2 py-1 bg-red-500/30 border border-red-500 rounded">Critical</span>
             <span className="px-2 py-1 bg-orange-500/30 border border-orange-500 rounded">High</span>
@@ -170,7 +170,7 @@ export default function AnalysisResults({ data }) {
         
         {originalSpec ? (
           <div className="relative">
-            <div className="bg-gray-900 rounded-lg border border-gray-600 overflow-x-auto max-h-96 overflow-y-auto">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-600 overflow-x-auto max-h-96 overflow-y-auto">
               <pre className="text-sm font-mono p-4">
                 {highlightedLines.map(({ line, severity, lineNumber }, index) => {
                   const styles = getSeverityStyles(severity);
@@ -178,11 +178,11 @@ export default function AnalysisResults({ data }) {
                     <div
                       key={index}
                       className={`${styles.bg} ${styles.border} ${styles.text} px-2 py-0.5 ${
-                        severity ? 'font-semibold' : ''
+                        severity ? 'font-semibold' : 'text-gray-900 dark:text-gray-100'
                       }`}
                       title={severity ? `심각도: ${severity}` : ''}
                     >
-                      <span className="text-gray-500 text-xs mr-2">{lineNumber}</span>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs mr-2">{lineNumber}</span>
                       <span>{line || ' '}</span>
                     </div>
                   );
@@ -192,8 +192,8 @@ export default function AnalysisResults({ data }) {
             
             {/* 취약점 범례 */}
             {vulnerabilities && vulnerabilities.length > 0 && (
-              <div className="mt-4 p-4 bg-gray-900 rounded-lg border border-gray-600">
-                <h4 className="text-sm font-semibold mb-2 text-gray-300">하이라이팅된 취약점:</h4>
+              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-600">
+                <h4 className="text-sm font-semibold mb-2 text-gray-800 dark:text-gray-300">하이라이팅된 취약점:</h4>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {vulnerabilities.map((vuln, index) => {
                     const severityColors = {
@@ -221,7 +221,7 @@ export default function AnalysisResults({ data }) {
             )}
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
             원본 OpenAPI 스펙이 없습니다.
           </div>
         )}

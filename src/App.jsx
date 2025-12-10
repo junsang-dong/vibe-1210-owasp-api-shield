@@ -5,6 +5,7 @@ import AnalysisResults from './components/AnalysisResults';
 import ThreatModelViewer from './components/ThreatModelViewer';
 import DefenseRecommendations from './components/DefenseRecommendations';
 import CodeGenerator from './components/CodeGenerator';
+import ThemeToggle from './components/ThemeToggle';
 
 function App() {
   const [specText, setSpecText] = useState('');
@@ -95,14 +96,21 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold mb-2">🔒 API Shield Nova</h1>
-          <p className="text-gray-400">
-            AI 기반 API 보안 자동 분석기 - OpenAPI 스펙 업로드 → 3분 안에 OWASP 위협 모델링 + 방어 아키텍처 완성
-          </p>
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold mb-2">🔒 API Shield Nova</h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                AI 기반 API 보안 자동 분석기 - OpenAPI 스펙 업로드 → 3분 안에 OWASP 위협 모델링 + 방어 아키텍처 완성
+              </p>
+            </div>
+            <div className="ml-4">
+              <ThemeToggle />
+            </div>
+          </div>
         </div>
       </header>
 
@@ -111,7 +119,7 @@ function App() {
         {/* Step 1: Input */}
         {!analysisResult && (
           <div className="max-w-4xl mx-auto space-y-6">
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold mb-4">Step 1: OpenAPI 스펙 입력</h2>
               
               <div className="space-y-6">
@@ -123,7 +131,7 @@ function App() {
               </div>
 
               {error && (
-                <div className="mt-4 p-4 bg-red-900/30 border border-red-600 rounded text-red-300">
+                <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-300 dark:border-red-600 rounded text-red-700 dark:text-red-300">
                   {error}
                 </div>
               )}
@@ -148,7 +156,7 @@ function App() {
             </div>
 
             {loading && (
-              <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="animate-pulse w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -183,14 +191,14 @@ function App() {
                   setSpecText('');
                   setActiveTab('summary');
                 }}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded"
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-gray-800 dark:text-gray-200"
               >
                 새로 분석하기
               </button>
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-gray-700">
+            <div className="border-b border-gray-200 dark:border-gray-700">
               <div className="flex gap-2 overflow-x-auto">
                 {tabs.map((tab) => {
                   const isActive = activeTab === tab.id;
@@ -200,8 +208,8 @@ function App() {
                       onClick={() => setActiveTab(tab.id)}
                       className={`px-4 py-2 font-medium whitespace-nowrap border-b-2 transition-colors ${
                         isActive
-                          ? 'border-blue-500 text-blue-400'
-                          : 'border-transparent text-gray-400 hover:text-gray-300'
+                          ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                          : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
                       }`}
                     >
                       {tab.label}
@@ -231,13 +239,13 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-gray-800">
+      <footer className="mt-16 py-8 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* 기술 스택 */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-300 mb-4">기술 스택</h3>
-              <div className="space-y-2 text-sm text-gray-400">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-300 mb-4">기술 스택</h3>
+              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">React 18</span>
                   <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">Vite 5</span>
@@ -254,8 +262,8 @@ function App() {
 
             {/* 개발자 정보 */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-300 mb-4">개발자 정보</h3>
-              <div className="space-y-2 text-sm text-gray-400">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-300 mb-4">개발자 정보</h3>
+              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                 <p>25.12.10 / 동준상.넥스트플랫폼</p>
                 <p>
                   <a 
@@ -280,7 +288,7 @@ function App() {
           </div>
           
           {/* 하단 저작권 정보 */}
-          <div className="mt-8 pt-6 border-t border-gray-700 text-center text-gray-500 text-sm">
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center text-gray-600 dark:text-gray-500 text-sm">
             <p>API Shield Nova - OWASP API Security Top 10 기반 자동 보안 분석 도구</p>
           </div>
         </div>

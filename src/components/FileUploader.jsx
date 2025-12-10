@@ -49,7 +49,7 @@ export default function FileUploader({ onFileLoad, onTextChange }) {
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           dragActive
             ? 'border-blue-500 bg-blue-500/10'
-            : 'border-gray-600 hover:border-gray-500'
+            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -68,7 +68,7 @@ export default function FileUploader({ onFileLoad, onTextChange }) {
           className="cursor-pointer flex flex-col items-center"
         >
           <svg
-            className="w-12 h-12 mb-4 text-gray-400"
+            className="w-12 h-12 mb-4 text-gray-500 dark:text-gray-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -83,7 +83,7 @@ export default function FileUploader({ onFileLoad, onTextChange }) {
           <p className="text-lg font-medium mb-2">
             OpenAPI 스펙 파일을 드래그하거나 클릭하여 업로드
           </p>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             JSON 또는 YAML 형식 (최대 5MB)
           </p>
         </label>

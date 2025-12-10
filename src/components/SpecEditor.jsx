@@ -109,7 +109,7 @@ export default function SpecEditor({ value, onChange, onLoadSample }) {
     <div className="w-full space-y-4">
       {/* 예시 문서 선택 섹션 */}
       <div>
-        <label className="text-sm font-medium text-gray-300 mb-3 block">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 block">
           📚 OpenAPI 스펙 예시 문서 선택
         </label>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -117,14 +117,14 @@ export default function SpecEditor({ value, onChange, onLoadSample }) {
             <div
               key={sample.id}
               onClick={() => handleLoadSample(sample)}
-              className={`bg-gray-800 border-2 rounded-lg p-4 cursor-pointer transition-all hover:border-blue-500 hover:shadow-lg ${
+              className={`bg-white dark:bg-gray-800 border-2 rounded-lg p-4 cursor-pointer transition-all hover:border-blue-500 hover:shadow-lg ${
                 selectedSample === sample.id
                   ? 'border-blue-500 shadow-lg'
-                  : 'border-gray-700'
+                  : 'border-gray-200 dark:border-gray-700'
               }`}
             >
               <div className="flex items-start justify-between mb-2">
-                <h4 className="font-semibold text-white text-sm">{sample.name}</h4>
+                <h4 className="font-semibold text-gray-900 dark:text-white text-sm">{sample.name}</h4>
                 <span
                   className={`px-2 py-1 rounded text-xs font-bold ${getRiskColorClass(
                     sample.riskColor
@@ -133,15 +133,15 @@ export default function SpecEditor({ value, onChange, onLoadSample }) {
                   {sample.risk}
                 </span>
               </div>
-              <p className="text-xs text-gray-400 mb-3">{sample.description}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">{sample.description}</p>
               
               {/* 메트릭 */}
               <div className="flex gap-2 mb-3">
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-600 dark:text-gray-500">
                   영향력: <span className={`px-1.5 py-0.5 rounded ${getImpactBadge(sample.impact)} text-white text-xs`}>{sample.impact}</span>
                 </span>
-                <span className="text-xs text-gray-500">
-                  중요도: <span className="text-gray-300">{sample.importance}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-500">
+                  중요도: <span className="text-gray-800 dark:text-gray-300">{sample.importance}</span>
                 </span>
               </div>
 
@@ -150,13 +150,13 @@ export default function SpecEditor({ value, onChange, onLoadSample }) {
                 {sample.tags.slice(0, 2).map((tag, idx) => (
                   <span
                     key={idx}
-                    className="px-2 py-0.5 bg-gray-700 text-gray-300 rounded text-xs"
+                    className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs"
                   >
                     {tag}
                   </span>
                 ))}
                 {sample.tags.length > 2 && (
-                  <span className="px-2 py-0.5 text-gray-500 text-xs">
+                  <span className="px-2 py-0.5 text-gray-600 dark:text-gray-500 text-xs">
                     +{sample.tags.length - 2}
                   </span>
                 )}
@@ -169,12 +169,12 @@ export default function SpecEditor({ value, onChange, onLoadSample }) {
       {/* 텍스트 입력 섹션 */}
       <div>
         <div className="flex justify-between items-center mb-2">
-          <label className="text-sm font-medium text-gray-300">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
             또는 텍스트로 직접 입력
           </label>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 rounded"
+            className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-gray-800 dark:text-gray-200"
           >
             {isExpanded ? '접기' : '펼치기'}
           </button>
@@ -185,7 +185,7 @@ export default function SpecEditor({ value, onChange, onLoadSample }) {
             onChange(e.target.value);
             setSelectedSample(null);
           }}
-          className={`w-full bg-gray-800 border border-gray-700 rounded-lg p-4 font-mono text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+          className={`w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-4 font-mono text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
             isExpanded ? 'h-96' : 'h-32'
           }`}
           placeholder="OpenAPI 스펙을 JSON 또는 YAML 형식으로 입력하세요..."
