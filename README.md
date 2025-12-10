@@ -83,24 +83,29 @@ npm run dev
 
 ## 🚀 프로덕션 배포 (Vercel)
 
-### 1. GitHub 리포지토리 생성 및 푸시
+자세한 배포 가이드는 [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md)를 참고하세요.
 
-```bash
-git init
-git add .
-git commit -m "Initial commit: API Security Analyzer"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/api-security-analyzer.git
-git push -u origin main
-```
+### 빠른 배포 가이드
 
-### 2. Vercel 배포
+1. **GitHub에 푸시** (이미 완료됨)
+   ```bash
+   git push -u origin main
+   ```
 
-1. [Vercel](https://vercel.com)에서 GitHub 연동
-2. 프로젝트 Import
-3. Environment Variables 설정:
+2. **Vercel에서 프로젝트 Import**
+   - [Vercel](https://vercel.com) 접속
+   - "Add New..." → "Project" 클릭
+   - `junsang-dong/vibe-1210-owasp-api-shield` 선택
+   - "Import" 클릭
+
+3. **Environment Variables 설정**
    - `OPENAI_API_KEY` = your_openai_api_key
-4. 자동 배포 완료
+   - Production, Preview, Development 모두 선택
+
+4. **Deploy 클릭**
+   - 배포 완료 후 제공되는 URL로 접속
+
+자세한 내용은 [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md) 참고
 
 ## 📂 프로젝트 구조
 
