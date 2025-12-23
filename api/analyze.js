@@ -29,10 +29,15 @@ export default async function handler(req, res) {
     body = req.body;
   }
 
-  const { openApiSpec } = body || {};
+  const { openApiSpec, language = 'ko' } = body || {};
 
   if (!openApiSpec) {
-    const error = { error: 'OpenAPI 스펙이 필요합니다.' };
+    const errorMessages = {
+      ko: 'API 스펙이 필요합니다.',
+      en: 'API specification is required.',
+      ja: 'API仕様が必要です。',
+    };
+    const error = { error: errorMessages[language] || errorMessages.ko };
     return res ? res.status(400).json(error) : Response.json(error, { status: 400 });
   }
 
@@ -47,9 +52,12 @@ export default async function handler(req, res) {
 
   const openai = new OpenAI({ apiKey });
 
-  const systemPrompt = `당신은 CISSP, CISA, CISM 자격을 보유한 API 보안 전문가입니다.
+  // 언어별 프롬프트 생성
+  const getSystemPrompt = (lang) => {
+    const prompts = {
+      ko: `당신은 CISSP, CISA, CISM 자격을 보유한 API 보안 전문가입니다.
 
-주어진 OpenAPI 스펙을 분석하여 다음을 수행하세요:
+주어진 API 스펙을 분석하여 다음을 수행하세요:
 
 1. OWASP API Security Top 10 (2023) 기준 취약점 탐지
    - API1: Broken Object Level Authorization (BOLA)
@@ -76,9 +84,9 @@ export default async function handler(req, res) {
    - API Gateway 설정
    - 실행 가능한 코드 (Express.js, FastAPI, Go Gin 등)
 
-4. 개선된 OpenAPI 스펙 생성
+4. 개선된 API 스펙 생성
 
-분석 결과는 반드시 다음 JSON 포맷으로 출력하세요:
+분석 결과는 반드시 다음 JSON 포맷으로 출력하세요. 모든 텍스트는 한국어로 작성하세요:
 {
   "summary": {
     "totalEndpoints": 숫자,
@@ -131,16 +139,199 @@ export default async function handler(req, res) {
       "provider": "AWS API Gateway 또는 Kong",
       "features": ["기능 목록"]
     },
-    "improvedOpenApiSpec": "개선된 OpenAPI 3.0 YAML 스펙"
+    "improvedOpenApiSpec": "개선된 API 3.0 YAML 스펙"
   }
-}`;
+}`,
+      en: `You are an API security expert with CISSP, CISA, and CISM certifications.
+
+Analyze the given API specification and perform the following:
+
+1. Detect vulnerabilities based on OWASP API Security Top 10 (2023)
+   - API1: Broken Object Level Authorization (BOLA)
+   - API2: Broken Authentication
+   - API3: Broken Object Property Level Authorization
+   - API4: Unrestricted Resource Consumption
+   - API5: Broken Function Level Authorization
+   - API6: Unrestricted Access to Sensitive Business Flows
+   - API7: Server Side Request Forgery (SSRF)
+   - API8: Security Misconfiguration
+   - API9: Improper Inventory Management
+   - API10: Unsafe Consumption of APIs
+
+2. For each vulnerability:
+   - Severity (CRITICAL/HIGH/MEDIUM/LOW)
+   - Attack scenario (actual possible hacking methods)
+   - CVE reference or real-world examples
+   - STRIDE model mapping
+
+3. Specific defense strategies:
+   - Authentication/authorization mechanism recommendations
+   - Rate Limiting configuration
+   - WAF rules
+   - API Gateway configuration
+   - Executable code (Express.js, FastAPI, Go Gin, etc.)
+
+4. Generate improved API specification
+
+Output the analysis results in the following JSON format. All text must be in English:
+{
+  "summary": {
+    "totalEndpoints": number,
+    "criticalIssues": number,
+    "highIssues": number,
+    "mediumIssues": number,
+    "lowIssues": number
+  },
+  "vulnerabilities": [
+    {
+      "id": "API1-001",
+      "owaspCategory": "API1:2023 - Broken Object Level Authorization",
+      "endpoint": "/api/users/{userId}",
+      "method": "GET",
+      "severity": "CRITICAL",
+      "description": "Detailed description",
+      "attackScenario": "Attack scenario",
+      "cveReference": "CVE reference or real-world example",
+      "stride": ["Information Disclosure", "Elevation of Privilege"]
+    }
+  ],
+  "threatModel": {
+    "stride": {
+      "spoofing": ["Threat description"],
+      "tampering": ["Threat description"],
+      "repudiation": ["Threat description"],
+      "informationDisclosure": ["Threat description"],
+      "denialOfService": ["Threat description"],
+      "elevationOfPrivilege": ["Threat description"]
+    }
+  },
+  "recommendations": {
+    "authentication": {
+      "type": "JWT Bearer Token",
+      "implementation": "Implementation method description",
+      "code": "Executable code"
+    },
+    "authorization": {
+      "pattern": "RBAC",
+      "implementation": "Implementation method description",
+      "code": "Executable code"
+    },
+    "rateLimit": {
+      "strategy": "Token Bucket per User",
+      "config": "100 requests/minute per user",
+      "code": "Executable code"
+    },
+    "wafRules": ["WAF rule list"],
+    "apiGateway": {
+      "provider": "AWS API Gateway or Kong",
+      "features": ["Feature list"]
+    },
+    "improvedOpenApiSpec": "Improved API 3.0 YAML specification"
+  }
+}`,
+      ja: `あなたはCISSP、CISA、CISMの資格を持つAPIセキュリティ専門家です。
+
+指定されたAPI仕様を分析し、以下を実行してください：
+
+1. OWASP API Security Top 10 (2023)基準の脆弱性検出
+   - API1: Broken Object Level Authorization (BOLA)
+   - API2: Broken Authentication
+   - API3: Broken Object Property Level Authorization
+   - API4: Unrestricted Resource Consumption
+   - API5: Broken Function Level Authorization
+   - API6: Unrestricted Access to Sensitive Business Flows
+   - API7: Server Side Request Forgery (SSRF)
+   - API8: Security Misconfiguration
+   - API9: Improper Inventory Management
+   - API10: Unsafe Consumption of APIs
+
+2. 各脆弱性について：
+   - 深刻度 (CRITICAL/HIGH/MEDIUM/LOW)
+   - 攻撃シナリオ (実際に可能なハッキング方法)
+   - CVE参照または実際の事例
+   - STRIDEモデルマッピング
+
+3. 具体的な防御戦略：
+   - 認証/認可メカニズムの推奨
+   - Rate Limiting設定
+   - WAFルール
+   - API Gateway設定
+   - 実行可能なコード (Express.js, FastAPI, Go Ginなど)
+
+4. 改善されたAPI仕様の生成
+
+分析結果は必ず次のJSON形式で出力してください。すべてのテキストは日本語で記述してください：
+{
+  "summary": {
+    "totalEndpoints": 数値,
+    "criticalIssues": 数値,
+    "highIssues": 数値,
+    "mediumIssues": 数値,
+    "lowIssues": 数値
+  },
+  "vulnerabilities": [
+    {
+      "id": "API1-001",
+      "owaspCategory": "API1:2023 - Broken Object Level Authorization",
+      "endpoint": "/api/users/{userId}",
+      "method": "GET",
+      "severity": "CRITICAL",
+      "description": "詳細な説明",
+      "attackScenario": "攻撃シナリオ",
+      "cveReference": "CVE参照または実際の事例",
+      "stride": ["Information Disclosure", "Elevation of Privilege"]
+    }
+  ],
+  "threatModel": {
+    "stride": {
+      "spoofing": ["脅威の説明"],
+      "tampering": ["脅威の説明"],
+      "repudiation": ["脅威の説明"],
+      "informationDisclosure": ["脅威の説明"],
+      "denialOfService": ["脅威の説明"],
+      "elevationOfPrivilege": ["脅威の説明"]
+    }
+  },
+  "recommendations": {
+    "authentication": {
+      "type": "JWT Bearer Token",
+      "implementation": "実装方法の説明",
+      "code": "実行可能なコード"
+    },
+    "authorization": {
+      "pattern": "RBAC",
+      "implementation": "実装方法の説明",
+      "code": "実行可能なコード"
+    },
+    "rateLimit": {
+      "strategy": "Token Bucket per User",
+      "config": "100 requests/minute per user",
+      "code": "実行可能なコード"
+    },
+    "wafRules": ["WAFルールリスト"],
+    "apiGateway": {
+      "provider": "AWS API GatewayまたはKong",
+      "features": ["機能リスト"]
+    },
+    "improvedOpenApiSpec": "改善されたAPI 3.0 YAML仕様"
+  }
+}`,
+    };
+    return prompts[lang] || prompts.ko;
+  };
+
+  const systemPrompt = getSystemPrompt(language);
 
   try {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `다음 OpenAPI 스펙을 분석해주세요:\n\n${openApiSpec}` },
+        { role: 'user', content: language === 'en' 
+          ? `Please analyze the following API specification:\n\n${openApiSpec}`
+          : language === 'ja'
+          ? `次のAPI仕様を分析してください：\n\n${openApiSpec}`
+          : `다음 API 스펙을 분석해주세요:\n\n${openApiSpec}` },
       ],
       temperature: 0.3,
       max_tokens: 4000,

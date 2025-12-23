@@ -1,18 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from './components/FileUploader';
 import SpecEditor from './components/SpecEditor';
 import AnalysisResults from './components/AnalysisResults';
 import ThreatModelViewer from './components/ThreatModelViewer';
 import DefenseRecommendations from './components/DefenseRecommendations';
 import CodeGenerator from './components/CodeGenerator';
-import ThemeToggle from './components/ThemeToggle';
+import SettingsMenu from './components/SettingsMenu';
+import { useLanguage } from './contexts/LanguageContext';
+import { getTranslation } from './utils/translations';
+
+// 방패 아이콘 컴포넌트
+const ShieldIcon = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    <path d="M9 12l2 2 4-4"/>
+  </svg>
+);
 
 function App() {
+  const { language } = useLanguage();
   const [specText, setSpecText] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('summary');
+  const [countdown, setCountdown] = useState(30);
 
   const handleFileLoad = (content) => {
     setSpecText(content);
@@ -26,9 +47,34 @@ function App() {
 
   // 샘플 로드는 SpecEditor 컴포넌트에서 직접 처리
 
+  // 카운트다운 타이머
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      setCountdown(30);
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setCountdown(30);
+    }
+
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, [loading]);
+
   const handleAnalyze = async () => {
     if (!specText.trim()) {
-      setError('OpenAPI 스펙을 입력하거나 업로드해주세요.');
+      setError(getTranslation(language, 'step1.error'));
       return;
     }
 
@@ -42,7 +88,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ openApiSpec: specText }),
+        body: JSON.stringify({ openApiSpec: specText, language }),
       });
 
       // 응답이 비어있는지 확인
@@ -69,7 +115,7 @@ function App() {
         throw new Error(data.error || '분석 중 오류가 발생했습니다.');
       }
 
-      // 원본 OpenAPI 스펙도 함께 저장
+      // 원본 API 스펙도 함께 저장
       setAnalysisResult({
         ...data,
         originalSpec: specText,
@@ -88,27 +134,30 @@ function App() {
   };
 
   const tabs = [
-    { id: 'summary', label: '📊 요약', component: AnalysisResults },
-    { id: 'vulnerabilities', label: '🔍 취약점 상세', component: AnalysisResults },
-    { id: 'threats', label: '🛡️ 위협 모델', component: ThreatModelViewer },
-    { id: 'defense', label: '⚙️ 방어책', component: DefenseRecommendations },
-    { id: 'code', label: '💻 코드', component: CodeGenerator },
+    { id: 'summary', label: `📊 ${getTranslation(language, 'step2.summary')}`, component: AnalysisResults },
+    { id: 'vulnerabilities', label: `🔍 ${getTranslation(language, 'step2.vulnerabilities')}`, component: AnalysisResults },
+    { id: 'threats', label: `🛡️ ${getTranslation(language, 'step2.threats')}`, component: ThreatModelViewer },
+    { id: 'defense', label: `⚙️ ${getTranslation(language, 'step2.defense')}`, component: DefenseRecommendations },
+    { id: 'code', label: `💻 ${getTranslation(language, 'step2.code')}`, component: CodeGenerator },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+    <div className="min-h-screen bg-adaptive-bg text-adaptive-text transition-colors">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-ocean-blue border-b border-ocean-blue/20">
         <div className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">🔒 API Shield Nova</h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                AI 기반 API 보안 자동 분석기 - OpenAPI 스펙 업로드 → 3분 안에 OWASP 위협 모델링 + 방어 아키텍처 완성
+              <h1 className="text-3xl font-bold mb-2 text-white flex items-center gap-3">
+                <ShieldIcon className="w-8 h-8 text-white" />
+                {getTranslation(language, 'header.title')}
+              </h1>
+              <p className="text-white/90">
+                {getTranslation(language, 'header.subtitle')}
               </p>
             </div>
             <div className="ml-4">
-              <ThemeToggle />
+              <SettingsMenu />
             </div>
           </div>
         </div>
@@ -119,8 +168,8 @@ function App() {
         {/* Step 1: Input */}
         {!analysisResult && (
           <div className="max-w-4xl mx-auto space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-bold mb-4">Step 1: OpenAPI 스펙 입력</h2>
+            <div className="bg-adaptive-surface rounded-lg p-6 border border-adaptive-border">
+              <h2 className="text-2xl font-bold mb-4">{getTranslation(language, 'step1.title')}</h2>
               
               <div className="space-y-6">
                 <FileUploader onFileLoad={handleFileLoad} onTextChange={handleTextChange} />
@@ -139,7 +188,7 @@ function App() {
               <button
                 onClick={handleAnalyze}
                 disabled={loading || !specText.trim()}
-                className="mt-6 w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg font-semibold text-lg transition-colors"
+                className="mt-6 w-full py-3 bg-ocean-blue hover:bg-ocean-blue/90 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg font-semibold text-lg text-white transition-colors"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -147,32 +196,32 @@ function App() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    분석 중...
+                    {getTranslation(language, 'common.analyzing')} ({countdown})
                   </span>
                 ) : (
-                  '🔍 보안 분석 시작'
+                  getTranslation(language, 'common.analyze')
                 )}
               </button>
             </div>
 
             {loading && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+              <div className="bg-adaptive-surface rounded-lg p-6 border border-adaptive-border">
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="animate-pulse w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>🔍 OpenAPI 스펙 파싱 중...</span>
+                    <div className="animate-pulse w-2 h-2 bg-adaptive-primary rounded-full"></div>
+                    <span>🔍 {getTranslation(language, 'step1.parsing')}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="animate-pulse w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>🛡️ OWASP Top 10 취약점 검사 중...</span>
+                    <div className="animate-pulse w-2 h-2 bg-adaptive-primary rounded-full"></div>
+                    <span>🛡️ {getTranslation(language, 'step1.checking')}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="animate-pulse w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>🧠 STRIDE 위협 모델링 수행 중...</span>
+                    <div className="animate-pulse w-2 h-2 bg-adaptive-primary rounded-full"></div>
+                    <span>🧠 {getTranslation(language, 'step1.modeling')}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="animate-pulse w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>⚙️ 방어 아키텍처 생성 중...</span>
+                    <div className="animate-pulse w-2 h-2 bg-adaptive-primary rounded-full"></div>
+                    <span>⚙️ {getTranslation(language, 'step1.generating')}</span>
                   </div>
                 </div>
               </div>
@@ -184,21 +233,21 @@ function App() {
         {analysisResult && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Step 2: 분석 결과</h2>
+              <h2 className="text-2xl font-bold">{getTranslation(language, 'step2.title')}</h2>
               <button
                 onClick={() => {
                   setAnalysisResult(null);
                   setSpecText('');
                   setActiveTab('summary');
                 }}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-gray-800 dark:text-gray-200"
+                className="px-4 py-2 bg-adaptive-surface hover:bg-adaptive-surface/80 rounded text-adaptive-text border border-adaptive-border"
               >
-                새로 분석하기
+                {getTranslation(language, 'step2.newAnalysis')}
               </button>
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-gray-200 dark:border-gray-700">
+            <div className="border-b border-adaptive-border">
               <div className="flex gap-2 overflow-x-auto">
                 {tabs.map((tab) => {
                   const isActive = activeTab === tab.id;
@@ -208,8 +257,8 @@ function App() {
                       onClick={() => setActiveTab(tab.id)}
                       className={`px-4 py-2 font-medium whitespace-nowrap border-b-2 transition-colors ${
                         isActive
-                          ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                          : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
+                          ? 'border-adaptive-primary text-adaptive-primary'
+                          : 'border-transparent text-adaptive-text/70 hover:text-adaptive-text'
                       }`}
                     >
                       {tab.label}
@@ -230,6 +279,7 @@ function App() {
                     data={analysisResult}
                     threatModel={analysisResult?.threatModel}
                     recommendations={analysisResult?.recommendations}
+                    activeTab={activeTab}
                   />
                 );
               })}
@@ -239,58 +289,12 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <footer className="mt-16 py-8 border-t border-adaptive-border bg-adaptive-bg">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* 기술 스택 */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-300 mb-4">기술 스택</h3>
-              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">React 18</span>
-                  <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">Vite 5</span>
-                  <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">Tailwind CSS</span>
-                  <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded">OpenAI GPT-4o-mini</span>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <span className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded">Vercel</span>
-                  <span className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded">Serverless Functions</span>
-                  <span className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded">OWASP API Top 10</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 개발자 정보 */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-300 mb-4">개발자 정보</h3>
-              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <p>25.12.10 / 동준상.넥스트플랫폼</p>
-                <p>
-                  <a 
-                    href="mailto:naebon@naver.com" 
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
-                  >
-                    naebon@naver.com
-                  </a>
-                </p>
-                <p>
-                  <a 
-                    href="https://www.nextplatform.net" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
-                  >
-                    www.nextplatform.net
-                  </a>
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          {/* 하단 저작권 정보 */}
-          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center text-gray-600 dark:text-gray-500 text-sm">
-            <p>API Shield Nova - OWASP API Security Top 10 기반 자동 보안 분석 도구</p>
-          </div>
+          <ul className="space-y-2 text-sm text-adaptive-text/80">
+            <li>• {getTranslation(language, 'footer.techStack')}: React 18, Vite 5, Tailwind CSS, OpenAI GPT-4o-mini, Vercel, Serverless Functions, OWASP API Top 10</li>
+            <li>• {getTranslation(language, 'footer.developerInfo')}: JUN / <a href="mailto:naebon@naver.com" className="text-blue-400 hover:text-blue-300 transition-colors">naebon@naver.com</a> / <a href="https://www.nextplatform.net" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">www.nextplatform.net</a></li>
+          </ul>
         </div>
       </footer>
     </div>

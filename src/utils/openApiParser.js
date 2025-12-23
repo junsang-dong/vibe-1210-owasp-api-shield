@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 
 /**
- * OpenAPI 스펙을 파싱하여 구조화된 데이터로 변환
+ * API 스펙을 파싱하여 구조화된 데이터로 변환
  */
 export function parseOpenApiSpec(specText) {
   try {
@@ -15,7 +15,7 @@ export function parseOpenApiSpec(specText) {
     }
 
     if (!spec || !spec.paths) {
-      throw new Error('유효한 OpenAPI 스펙이 아닙니다. paths 필드가 필요합니다.');
+      throw new Error('유효한 API 스펙이 아닙니다. paths 필드가 필요합니다.');
     }
 
     const endpoints = [];
@@ -52,7 +52,7 @@ export function parseOpenApiSpec(specText) {
       components: spec.components || {},
     };
   } catch (error) {
-    throw new Error(`OpenAPI 파싱 실패: ${error.message}`);
+    throw new Error(`API 파싱 실패: ${error.message}`);
   }
 }
 

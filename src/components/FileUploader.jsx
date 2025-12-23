@@ -1,6 +1,9 @@
 import { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getTranslation } from '../utils/translations';
 
 export default function FileUploader({ onFileLoad, onTextChange }) {
+  const { language } = useLanguage();
   const [dragActive, setDragActive] = useState(false);
 
   const handleDrag = (e) => {
@@ -32,7 +35,7 @@ export default function FileUploader({ onFileLoad, onTextChange }) {
 
   const handleFile = (file) => {
     if (file.size > 5 * 1024 * 1024) {
-      alert('파일 크기는 5MB를 초과할 수 없습니다.');
+      alert(getTranslation(language, 'step1.fileFormat'));
       return;
     }
 
@@ -48,8 +51,8 @@ export default function FileUploader({ onFileLoad, onTextChange }) {
       <div
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           dragActive
-            ? 'border-blue-500 bg-blue-500/10'
-            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+            ? 'border-adaptive-primary bg-adaptive-primary/10'
+            : 'border-adaptive-border hover:border-adaptive-primary/50'
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -68,7 +71,7 @@ export default function FileUploader({ onFileLoad, onTextChange }) {
           className="cursor-pointer flex flex-col items-center"
         >
           <svg
-            className="w-12 h-12 mb-4 text-gray-500 dark:text-gray-400"
+            className="w-12 h-12 mb-4 text-adaptive-text/70"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -81,10 +84,10 @@ export default function FileUploader({ onFileLoad, onTextChange }) {
             />
           </svg>
           <p className="text-lg font-medium mb-2">
-            OpenAPI 스펙 파일을 드래그하거나 클릭하여 업로드
+            {getTranslation(language, 'step1.fileUpload')}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            JSON 또는 YAML 형식 (최대 5MB)
+          <p className="text-sm text-adaptive-text/70">
+            {getTranslation(language, 'step1.fileFormat')}
           </p>
         </label>
       </div>

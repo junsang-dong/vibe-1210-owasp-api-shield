@@ -25,17 +25,24 @@ export default function ThemeToggle() {
     setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
   };
 
+  // 헤더가 오션 블루인지 확인 (부모 요소의 배경색 확인)
+  const isInOceanBlueHeader = true; // 헤더에서 사용 중
+
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+      className={`p-2 rounded-lg transition-colors ${
+        isInOceanBlueHeader
+          ? 'bg-white/20 hover:bg-white/30 text-white'
+          : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'
+      }`}
       aria-label="테마 전환"
       title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
     >
       {theme === 'dark' ? (
         // 라이트 모드 아이콘 (태양)
         <svg
-          className="w-5 h-5 text-yellow-500"
+          className={`w-5 h-5 ${isInOceanBlueHeader ? 'text-yellow-300' : 'text-yellow-500'}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -50,7 +57,7 @@ export default function ThemeToggle() {
       ) : (
         // 다크 모드 아이콘 (달)
         <svg
-          className="w-5 h-5 text-gray-700"
+          className={`w-5 h-5 ${isInOceanBlueHeader ? 'text-white' : 'text-gray-700'}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

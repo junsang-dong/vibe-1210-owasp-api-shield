@@ -3,7 +3,27 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Data-Blue-Theme-Light */
+    --adaptive-primary: #1B7FCF;
+    --adaptive-bg: #FFFFFF;
+    --adaptive-surface: #F8F9FA;
+    --adaptive-text: #0F0F0F;
+    --adaptive-border: #E0E0E0;
+  }
+
+  .dark {
+    /* Data-Blue-Theme-Dark */
+    --adaptive-primary: #4BA3E8;
+    --adaptive-bg: #000000;
+    --adaptive-surface: #0F0F0F;
+    --adaptive-text: #FFFFFF;
+    --adaptive-border: #2D2D2D;
+  }
+
   body {
-    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors;
+    background-color: var(--adaptive-bg);
+    color: var(--adaptive-text);
+    transition: background-color 0.3s, color 0.3s;
   }
 }

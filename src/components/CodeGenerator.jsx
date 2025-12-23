@@ -1,8 +1,11 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getTranslation } from '../utils/translations';
 
 export default function CodeGenerator({ recommendations }) {
+  const { language } = useLanguage();
   const [selectedFormat, setSelectedFormat] = useState('openapi');
 
   if (!recommendations) return null;
@@ -34,7 +37,7 @@ export default function CodeGenerator({ recommendations }) {
     } else if (format === 'yaml') {
       downloadFile(improvedSpec, 'improved-openapi-spec.yaml', 'text/yaml');
     } else if (format === 'markdown') {
-      const markdown = `# 개선된 OpenAPI 스펙\n\n\`\`\`yaml\n${improvedSpec}\n\`\`\``;
+      const markdown = `# ${getTranslation(language, 'code.title')}\n\n\`\`\`yaml\n${improvedSpec}\n\`\`\``;
       downloadFile(markdown, 'improved-openapi-spec.md', 'text/markdown');
     }
   };
@@ -42,44 +45,44 @@ export default function CodeGenerator({ recommendations }) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-bold">💻 개선 코드 생성</h3>
+        <h3 className="text-xl font-bold">💻 {getTranslation(language, 'code.title')}</h3>
         {improvedSpec && (
           <div className="flex gap-2">
             <button
               onClick={() => handleDownload('json')}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm"
+              className="px-4 py-2 bg-adaptive-primary hover:bg-adaptive-primary/90 rounded text-sm text-white"
             >
-              JSON 다운로드
+              {getTranslation(language, 'code.jsonDownload')}
             </button>
             <button
               onClick={() => handleDownload('yaml')}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm"
+              className="px-4 py-2 bg-adaptive-primary hover:bg-adaptive-primary/90 rounded text-sm text-white"
             >
-              YAML 다운로드
+              {getTranslation(language, 'code.yamlDownload')}
             </button>
             <button
               onClick={() => handleDownload('markdown')}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm"
+              className="px-4 py-2 bg-adaptive-primary hover:bg-adaptive-primary/90 rounded text-sm text-white"
             >
-              Markdown 다운로드
+              {getTranslation(language, 'code.markdownDownload')}
             </button>
           </div>
         )}
       </div>
 
       {improvedSpec ? (
-        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div className="bg-adaptive-surface rounded-lg p-6 border border-adaptive-border">
           <div className="mb-4">
             <div className="flex gap-2">
               <button
                 onClick={() => setSelectedFormat('openapi')}
                 className={`px-4 py-2 rounded text-sm ${
                   selectedFormat === 'openapi'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'bg-adaptive-primary text-white'
+                    : 'bg-adaptive-surface border border-adaptive-border text-adaptive-text hover:bg-adaptive-surface/80'
                 }`}
               >
-                OpenAPI 스펙
+                {getTranslation(language, 'code.apiSpec')}
               </button>
             </div>
           </div>
@@ -96,8 +99,8 @@ export default function CodeGenerator({ recommendations }) {
           </div>
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-400">
-          개선된 OpenAPI 스펙이 생성되지 않았습니다.
+        <div className="text-center py-8 text-adaptive-text/70">
+          {getTranslation(language, 'code.noImprovedSpec')}
         </div>
       )}
     </div>
